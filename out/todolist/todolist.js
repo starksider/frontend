@@ -66,8 +66,7 @@ TodoList.prototype = {
             for (var _iterator2 = items[Symbol.iterator](), _step2; !(_iteratorNormalCompletion2 = (_step2 = _iterator2.next()).done); _iteratorNormalCompletion2 = true) {
                 var item = _step2.value;
 
-                var obj = { text: item, date: new Date().getMilliseconds() };
-                this.messages.push(obj);
+                this.messages.push({ text: item, date: new Date().getMilliseconds() });
             }
         } catch (err) {
             _didIteratorError2 = true;

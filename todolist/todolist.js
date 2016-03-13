@@ -24,8 +24,7 @@ function TodoList(viewMode = consoleView){
 TodoList.prototype = {
     add(...items) {
         for (let item of items){
-            let obj = { text: item, date: new Date().getMilliseconds() };
-            this.messages.push(obj);
+            this.messages.push({ text: item, date: new Date().getMilliseconds()});
         }
         return this;
     },
