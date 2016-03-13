@@ -1,10 +1,54 @@
-"use strict";
+'use strict';
 
 /**
  * Created by Andrey on 13.03.2016.
  */
 
+function consoleView() {
+    var desc = arguments.length <= 0 || arguments[0] === undefined ? '' : arguments[0];
+    var renderItems = arguments.length <= 1 || arguments[1] === undefined ? [] : arguments[1];
+
+    if (Array.isArray(desc)) {
+        renderItems = desc;
+        desc = '';
+    }
+    var result = '',
+        count = 1;
+    var _iteratorNormalCompletion = true;
+    var _didIteratorError = false;
+    var _iteratorError = undefined;
+
+    try {
+        for (var _iterator = renderItems[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
+            var _step$value = _step.value;
+            var text = _step$value.text;
+            var date = _step$value.date;
+
+            result += count + '. ' + text + ' - date: ' + date + '\n';
+            count++;
+        }
+    } catch (err) {
+        _didIteratorError = true;
+        _iteratorError = err;
+    } finally {
+        try {
+            if (!_iteratorNormalCompletion && _iterator.return) {
+                _iterator.return();
+            }
+        } finally {
+            if (_didIteratorError) {
+                throw _iteratorError;
+            }
+        }
+    }
+
+    console.log(desc + result);
+}
+
 function TodoList() {
+    var viewMode = arguments.length <= 0 || arguments[0] === undefined ? consoleView : arguments[0];
+
+    this.view = viewMode;
     this.messages = [];
 };
 
@@ -14,53 +58,16 @@ TodoList.prototype = {
             items[_key] = arguments[_key];
         }
 
-        var _iteratorNormalCompletion = true;
-        var _didIteratorError = false;
-        var _iteratorError = undefined;
-
-        try {
-            for (var _iterator = items[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
-                var item = _step.value;
-
-                var obj = { text: item, date: new Date().getTime() };
-                this.messages.push(obj);
-            }
-        } catch (err) {
-            _didIteratorError = true;
-            _iteratorError = err;
-        } finally {
-            try {
-                if (!_iteratorNormalCompletion && _iterator.return) {
-                    _iterator.return();
-                }
-            } finally {
-                if (_didIteratorError) {
-                    throw _iteratorError;
-                }
-            }
-        }
-
-        return this;
-    },
-    remove: function remove() {
-        var index = arguments.length <= 0 || arguments[0] === undefined ? 0 : arguments[0];
-
-        var deleted = [];
-
-        for (var _len2 = arguments.length, indexes = Array(_len2 > 1 ? _len2 - 1 : 0), _key2 = 1; _key2 < _len2; _key2++) {
-            indexes[_key2 - 1] = arguments[_key2];
-        }
-
-        indexes.push(index);
         var _iteratorNormalCompletion2 = true;
         var _didIteratorError2 = false;
         var _iteratorError2 = undefined;
 
         try {
-            for (var _iterator2 = indexes[Symbol.iterator](), _step2; !(_iteratorNormalCompletion2 = (_step2 = _iterator2.next()).done); _iteratorNormalCompletion2 = true) {
-                var i = _step2.value;
+            for (var _iterator2 = items[Symbol.iterator](), _step2; !(_iteratorNormalCompletion2 = (_step2 = _iterator2.next()).done); _iteratorNormalCompletion2 = true) {
+                var item = _step2.value;
 
-                deleted.push(this.messages.splice(i, 1));
+                var obj = { text: item, date: new Date().getMilliseconds() };
+                this.messages.push(obj);
             }
         } catch (err) {
             _didIteratorError2 = true;
@@ -77,22 +84,27 @@ TodoList.prototype = {
             }
         }
 
-        return deleted;
+        return this;
     },
-    find: function find(text) {
-        var result = [];
+    remove: function remove() {
+        var index = arguments.length <= 0 || arguments[0] === undefined ? 0 : arguments[0];
 
+        var deleted = [];
+
+        for (var _len2 = arguments.length, indexes = Array(_len2 > 1 ? _len2 - 1 : 0), _key2 = 1; _key2 < _len2; _key2++) {
+            indexes[_key2 - 1] = arguments[_key2];
+        }
+
+        indexes.push(index);
         var _iteratorNormalCompletion3 = true;
         var _didIteratorError3 = false;
         var _iteratorError3 = undefined;
 
         try {
-            for (var _iterator3 = this.messages[Symbol.iterator](), _step3; !(_iteratorNormalCompletion3 = (_step3 = _iterator3.next()).done); _iteratorNormalCompletion3 = true) {
-                var item = _step3.value;
+            for (var _iterator3 = indexes[Symbol.iterator](), _step3; !(_iteratorNormalCompletion3 = (_step3 = _iterator3.next()).done); _iteratorNormalCompletion3 = true) {
+                var i = _step3.value;
 
-                if (item.indexOf(text) > -1) {
-                    result.push(item);
-                }
+                deleted.push(this.messages.splice(i, 1)[0]);
             }
         } catch (err) {
             _didIteratorError3 = true;
@@ -109,23 +121,24 @@ TodoList.prototype = {
             }
         }
 
-        return result;
+        this.view('Removed item' + (deleted.length > 1 ? 's' : '') + ': ', deleted);
+
+        return deleted;
     },
-    display: function display() {
-        var result = '',
-            count = 1;
+    find: function find(match) {
+        var result = [];
+
         var _iteratorNormalCompletion4 = true;
         var _didIteratorError4 = false;
         var _iteratorError4 = undefined;
 
         try {
             for (var _iterator4 = this.messages[Symbol.iterator](), _step4; !(_iteratorNormalCompletion4 = (_step4 = _iterator4.next()).done); _iteratorNormalCompletion4 = true) {
-                var _step4$value = _step4.value;
-                var text = _step4$value.text;
-                var date = _step4$value.date;
+                var item = _step4.value;
 
-                result += count + ". " + text + " - date: " + date + "\n";
-                count++;
+                if (item.text.indexOf(match) > -1) {
+                    result.push(item);
+                }
             }
         } catch (err) {
             _didIteratorError4 = true;
@@ -142,13 +155,18 @@ TodoList.prototype = {
             }
         }
 
-        console.log(result);
+        this.view('Matched item' + (result.length > 1 ? 's' : '') + ': ', result);
+
+        return result;
+    },
+    display: function display() {
+        this.view(this.messages);
     }
 };
 
 var todo = new TodoList();
 
 todo.add("asd1sd", "asdaswdad", "wqewefwfw", "qwewefdw1d").display();
+todo.find("asd");
 todo.remove();
-todo.display();
 //# sourceMappingURL=todolist.js.map
