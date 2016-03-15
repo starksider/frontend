@@ -29,12 +29,18 @@ TodoList.prototype = {
         return this;
     },
     remove(index = 0, ...indexes) {
-        let deleted = [];
+        let prevIndex,
+            deleted = [],
+            messages = this.messages;
 
         indexes.push(index);
         for (let i of indexes){
-            deleted.push(this.messages.splice(i,1)[0]);
+            if (prevIndex === i) continue;
+            deleted.push(messages[i]);
+            delete messages[i];
+            prevIndex = i;
         }
+        this.messages = messages.filter(() => true);
         this.view(`Removed item${deleted.length > 1 ? 's' : ''}: `, deleted);
 
         return deleted;
@@ -48,7 +54,6 @@ TodoList.prototype = {
             }
         }
         this.view(`Matched item${result.length > 1 ? 's' : ''}: `, result);
-
         return result;
     },
     display() {
@@ -58,6 +63,7 @@ TodoList.prototype = {
 
 let todo = new TodoList();
 
-todo.add("asd1sd", "asdaswdad", "wqewefwfw", "qwewefdw1d").display();
+todo.add("1asd1sd", "2asdaswdad", "3wqewefwfw", "4qwewefdw1d").display();
 todo.find("asd");
-todo.remove();
+todo.remove(1,1,1);
+todo.display();

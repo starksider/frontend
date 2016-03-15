@@ -88,7 +88,9 @@ TodoList.prototype = {
     remove: function remove() {
         var index = arguments.length <= 0 || arguments[0] === undefined ? 0 : arguments[0];
 
-        var deleted = [];
+        var prevIndex = void 0,
+            deleted = [],
+            messages = this.messages;
 
         for (var _len2 = arguments.length, indexes = Array(_len2 > 1 ? _len2 - 1 : 0), _key2 = 1; _key2 < _len2; _key2++) {
             indexes[_key2 - 1] = arguments[_key2];
@@ -103,7 +105,10 @@ TodoList.prototype = {
             for (var _iterator3 = indexes[Symbol.iterator](), _step3; !(_iteratorNormalCompletion3 = (_step3 = _iterator3.next()).done); _iteratorNormalCompletion3 = true) {
                 var i = _step3.value;
 
-                deleted.push(this.messages.splice(i, 1)[0]);
+                if (prevIndex === i) continue;
+                deleted.push(messages[i]);
+                delete messages[i];
+                prevIndex = i;
             }
         } catch (err) {
             _didIteratorError3 = true;
@@ -120,6 +125,9 @@ TodoList.prototype = {
             }
         }
 
+        this.messages = messages.filter(function () {
+            return true;
+        });
         this.view('Removed item' + (deleted.length > 1 ? 's' : '') + ': ', deleted);
 
         return deleted;
@@ -155,7 +163,6 @@ TodoList.prototype = {
         }
 
         this.view('Matched item' + (result.length > 1 ? 's' : '') + ': ', result);
-
         return result;
     },
     display: function display() {
@@ -165,7 +172,8 @@ TodoList.prototype = {
 
 var todo = new TodoList();
 
-todo.add("asd1sd", "asdaswdad", "wqewefwfw", "qwewefdw1d").display();
+todo.add("1asd1sd", "2asdaswdad", "3wqewefwfw", "4qwewefdw1d").display();
 todo.find("asd");
-todo.remove();
+todo.remove(1, 1, 1);
+todo.display();
 //# sourceMappingURL=todolist.js.map
