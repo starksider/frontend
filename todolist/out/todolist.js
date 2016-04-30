@@ -128,7 +128,7 @@ TodoList.prototype = {
         this.messages = messages.filter(function () {
             return true;
         });
-        this.view('Removed item' + (deleted.length > 1 ? 's' : '') + ': ', deleted);
+        this.view('Removed ' + deleted.length + ' item' + (deleted.length > 1 ? 's' : '') + ': ', deleted);
 
         return deleted;
     },
@@ -172,8 +172,9 @@ TodoList.prototype = {
 
 var todo = new TodoList();
 
-todo.add("1asd1sd", "2asdaswdad", "3wqewefwfw", "4qwewefdw1d").display();
+todo.add("1asd1sd", "2asdaswdsad", "3wqswswesdw", "4qwewefdw1d").display();
 todo.find("asd");
 todo.remove(1, 1, 1);
 todo.display();
+
 //# sourceMappingURL=todolist.js.map
