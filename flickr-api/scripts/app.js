@@ -6,31 +6,70 @@ const API_SECRET = 'b3c2e211c6b3d92b';
 
 class FlickrApp {
     constructor(apiKey, apiSecret){
-        this.apiKey = apiKey;
-        this.apiSecrtet = apiSecret;
-        this.REQUEST_URL = 'https://api.flickr.com/services/rest/?format=json&api_key=' + apiKey;
+        this.API_KEY = apiKey;
+        this.API_SECRTET = apiSecret;
     }
 
+    /**
+     * basic flickr url for all methods
+     * @return {string}
+     */
+    get BASIC_URL() {
+        return 'https://api.flickr.com/services/rest/?format=json&api_key=' + this.API_KEY;
+    }
 
-    buildUrl(params = {}, url = this.REQUEST_URL){
+    /**
+     * build request url based on params
+     * @param params - object with flickr methods and parameters
+     * @param url
+     * @returns {string}
+     */
+    buildUrl(params = {}, url = this.BASIC_URL){
         for (let key in params){
             url += `&${key}=${params[key]}`;
         }
         return url;
     }
 
+    /**
+     * specific function for finding photos by key word
+     * @param keyWord
+     */
     findPhotos(keyWord){
-
+        let url = this.buildUrl({
+            method: 'flickr.photos.search',
+            text: keyWord
+        });
+        scriptRequest(url, (data) => {
+            this.renderPhotos(data.photos.photo);
+        }, (data) => {
+            throw Error(`Wrong url - ${data}`);
+        });
     }
+
+    renderPhotos(photos = []){
+        let ul = document.createElement("ul");
+        for (let {farm, server, id, secret} of photos){
+            let li = document.createElement("li");
+            let img = document.createElement("img");
+            img.src = `https://farm${farm}.static.flickr.com/${server}/${id}_${secret}.jpg`;
+            li.appendChild(img);
+            ul.appendChild(li);
+        }
+        document.body.appendChild(ul);
+    }
+
 }
 
-var request = new XMLHttpRequest();
-request.onreadystatechange = function () {
-    if (this.status === 200) {
-        console.log("YESSSSS!!!");
-    } else {
-       console.log("NO!!!");
+let flickr = new FlickrApp(API_KEY, API_SECRET);
+let elems = {
+    input: document.getElementById("photos"),
+    button: document.getElementById("get_photos")
+};
+elems.button.onclick = () => {
+    let text = elems.input.value;
+    if (text != ''){
+       flickr.findPhotos(text);
     }
 };
-request.open('GET', url);
-request.send();
+

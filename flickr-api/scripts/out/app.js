@@ -14,39 +14,117 @@ var FlickrApp = function () {
     function FlickrApp(apiKey, apiSecret) {
         _classCallCheck(this, FlickrApp);
 
-        this.apiKey = apiKey;
-        this.apiSecrtet = apiSecret;
-        this.REQUEST_URL = 'https://api.flickr.com/services/rest/?format=json&api_key=' + apiKey;
+        this.API_KEY = apiKey;
+        this.API_SECRTET = apiSecret;
     }
+
+    /**
+     * basic flickr url for all methods
+     * @return {string}
+     */
+
 
     _createClass(FlickrApp, [{
         key: 'buildUrl',
+
+
+        /**
+         * build request url based on params
+         * @param params - object with flickr methods and parameters
+         * @param url
+         * @returns {string}
+         */
         value: function buildUrl() {
             var params = arguments.length <= 0 || arguments[0] === undefined ? {} : arguments[0];
-            var url = arguments.length <= 1 || arguments[1] === undefined ? this.REQUEST_URL : arguments[1];
+            var url = arguments.length <= 1 || arguments[1] === undefined ? this.BASIC_URL : arguments[1];
 
             for (var key in params) {
                 url += '&' + key + '=' + params[key];
             }
             return url;
         }
+
+        /**
+         * specific function for finding photos by key word
+         * @param keyWord
+         */
+
     }, {
         key: 'findPhotos',
-        value: function findPhotos(keyWord) {}
+        value: function findPhotos(keyWord) {
+            var _this = this;
+
+            var url = this.buildUrl({
+                method: 'flickr.photos.search',
+                text: keyWord
+            });
+            scriptRequest(url, function (data) {
+                _this.renderPhotos(data.photos.photo);
+            }, function (data) {
+                throw Error('Wrong url - ' + data);
+            });
+        }
+    }, {
+        key: 'renderPhotos',
+        value: function renderPhotos() {
+            var photos = arguments.length <= 0 || arguments[0] === undefined ? [] : arguments[0];
+
+            var ul = document.createElement("ul");
+            var _iteratorNormalCompletion = true;
+            var _didIteratorError = false;
+            var _iteratorError = undefined;
+
+            try {
+                for (var _iterator = photos[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
+                    var _step$value = _step.value;
+                    var farm = _step$value.farm;
+                    var server = _step$value.server;
+                    var id = _step$value.id;
+                    var secret = _step$value.secret;
+
+                    var li = document.createElement("li");
+                    var img = document.createElement("img");
+                    img.src = 'https://farm' + farm + '.static.flickr.com/' + server + '/' + id + '_' + secret + '.jpg';
+                    li.appendChild(img);
+                    ul.appendChild(li);
+                }
+            } catch (err) {
+                _didIteratorError = true;
+                _iteratorError = err;
+            } finally {
+                try {
+                    if (!_iteratorNormalCompletion && _iterator.return) {
+                        _iterator.return();
+                    }
+                } finally {
+                    if (_didIteratorError) {
+                        throw _iteratorError;
+                    }
+                }
+            }
+
+            document.body.appendChild(ul);
+        }
+    }, {
+        key: 'BASIC_URL',
+        get: function get() {
+            return 'https://api.flickr.com/services/rest/?format=json&api_key=' + this.API_KEY;
+        }
     }]);
 
     return FlickrApp;
 }();
 
-var request = new XMLHttpRequest();
-request.onreadystatechange = function () {
-    if (this.status === 200) {
-        console.log("YESSSSS!!!");
-    } else {
-        console.log("NO!!!");
+var flickr = new FlickrApp(API_KEY, API_SECRET);
+var elems = {
+    input: document.getElementById("photos"),
+    button: document.getElementById("get_photos")
+};
+elems.button.onclick = function () {
+    var text = elems.input.value;
+    if (text != '') {
+        flickr.findPhotos(text);
     }
 };
-request.open('GET', url);
-request.send();
 
 //# sourceMappingURL=app.js.map
