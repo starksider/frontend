@@ -32,14 +32,20 @@ class FlickrApp {
     }
 
     /**
-     * specific function for finding photos by key word
-     * @param keyWord
+     * specific function for finding photos by phrase or more complex options
+     * @param text
+     * @param options
      */
-    findPhotos(keyWord){
-        let url = this.buildUrl({
-            method: 'flickr.photos.search',
-            text: keyWord
-        });
+    findPhotos(text, options = {}){
+        options = typeof text == 'object' ? text : options;
+        let standardOptions = {method: 'flickr.photos.search'};
+        let defaults = {
+            text: text,
+            per_page: 20,
+            page: 1
+        };
+        let parameters = Object.assign({}, defaults, options, standardOptions);
+        let url = this.buildUrl(parameters);
         scriptRequest(url, (data) => {
             this.renderPhotos(data.photos.photo);
         }, (data) => {
@@ -69,7 +75,7 @@ let elems = {
 elems.button.onclick = () => {
     let text = elems.input.value;
     if (text != ''){
-       flickr.findPhotos(text);
+       flickr.findPhotos({text: text, per_page: 5});
     }
 };
 

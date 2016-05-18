@@ -1,5 +1,7 @@
 'use strict';
 
+var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol ? "symbol" : typeof obj; };
+
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -45,19 +47,27 @@ var FlickrApp = function () {
         }
 
         /**
-         * specific function for finding photos by key word
-         * @param keyWord
+         * specific function for finding photos by phrase or more complex options
+         * @param text
+         * @param options
          */
 
     }, {
         key: 'findPhotos',
-        value: function findPhotos(keyWord) {
+        value: function findPhotos(text) {
             var _this = this;
 
-            var url = this.buildUrl({
-                method: 'flickr.photos.search',
-                text: keyWord
-            });
+            var options = arguments.length <= 1 || arguments[1] === undefined ? {} : arguments[1];
+
+            options = (typeof text === 'undefined' ? 'undefined' : _typeof(text)) == 'object' ? text : options;
+            var standardOptions = { method: 'flickr.photos.search' };
+            var defaults = {
+                text: text,
+                per_page: 20,
+                page: 1
+            };
+            var parameters = Object.assign({}, defaults, options, standardOptions);
+            var url = this.buildUrl(parameters);
             scriptRequest(url, function (data) {
                 _this.renderPhotos(data.photos.photo);
             }, function (data) {
@@ -123,7 +133,7 @@ var elems = {
 elems.button.onclick = function () {
     var text = elems.input.value;
     if (text != '') {
-        flickr.findPhotos(text);
+        flickr.findPhotos({ text: text, per_page: 5 });
     }
 };
 
