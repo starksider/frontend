@@ -1,6 +1,8 @@
 /**
  * Created by Andrey on 27.04.2016.
  */
+let request = require('./request');
+
 const API_KEY = '72755c7ee49139053c45348fd0585eb9';
 const API_SECRET = 'b3c2e211c6b3d92b';
 
@@ -46,7 +48,7 @@ class FlickrApp {
         };
         let parameters = Object.assign({}, defaults, options, standardOptions);
         let url = this.buildUrl(parameters);
-        scriptRequest(url, (data) => {
+        request.scriptRequest(url, (data) => {
             this.renderPhotos(data.photos.photo);
         }, (data) => {
             throw Error(`Wrong url - ${data}`);
