@@ -40,7 +40,7 @@ class Request {
         // а 'readyState=complete' -- "скрипт выполнился", но иногда
         // почему-то случается только одно из них, поэтому проверяем оба
         script.onreadystatechange = function() {
-            if (this.readyState == 'complete' || this.readyState == 'loaded') {
+            if (this.readyState === 'complete' || this.readyState === 'loaded') {
                 this.onreadystatechange = null;
                 setTimeout(checkCallback, 0); // Вызвать checkCallback - после скрипта
             }
