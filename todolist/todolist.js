@@ -19,7 +19,7 @@ function consoleView(desc = '', renderItems = []){
 function TodoList(viewMode = consoleView){
     this.view = viewMode;
     this.messages = [];
-};
+}
 
 TodoList.prototype = {
     add(...items) {
