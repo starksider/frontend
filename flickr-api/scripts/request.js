@@ -12,7 +12,7 @@ class Request {
         var scriptOk = false; // флаг, что вызов прошел успешно
 
         // сгенерировать имя JSONP-функции для запроса
-        var callbackName = 'cb' + String(Math.random()).slice(-6);
+        var callbackName = 'cb' + String(Math.random()).slice(-5);
 
         // укажем это имя в URL запроса
         url += ~url.indexOf('?') ? '&' : '?';
